@@ -16,6 +16,14 @@
         <p> Tipo: <span class="badge text-bg-danger">Nothing</span></p>
     @endif
 
+    @if (count($project->technologies) > 0)
+        <p>
+            Tecnologia: @foreach ($project->technologies as $technology)
+                            <span class="badge text-bg-warning">{{ $technology->title }}</span>
+                        @endforeach
+        </p>
+    @endif
+
 
     <div class="my-5">
         <p>{{ $project->body }}</p>

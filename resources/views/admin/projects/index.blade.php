@@ -39,6 +39,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">Titolo</th>
                 <th scope="col">Tipo</th>
+                <th scope="col">Tecnologia</th>
                 <th scope="col">Data</th>
                 <th scope="col">Azioni</th>
             </tr>
@@ -59,6 +60,16 @@
                     @else
                     <td>Nothing</td>
                     @endif
+
+                    {{-- Tecnologia del progetto --}}
+                    <td>
+                        @forelse ($project->technologies as $technology)
+                            <span class="badge text-bg-warning">{{ $technology->title }}</span>
+                        @empty
+                            -no technology-
+                        @endforelse
+
+                    </td>
 
 
                     {{-- Data dell'ultimo aggiornamento formattata --}}
