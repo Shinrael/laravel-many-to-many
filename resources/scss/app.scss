@@ -1,0 +1,27 @@
+@import '~bootstrap/scss/bootstrap';
+
+@import './partials/aside';
+
+@import './partials/_custom-btn.scss';
+
+.main-wrapper{
+    height: calc(100vh - 72px);
+}
+
+header{
+    .container-fluid{
+        .home-btn{
+            margin-left: 190px;
+        }
+    }
+}
+
+.table-crud{
+    td:first-child{
+        width: 500px;
+    }
+    input{
+        border: none;
+        outline: none;
+    }
+}

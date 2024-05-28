@@ -1,0 +1,21 @@
+.custom-toggle-btn {
+    background-color: #28a745; /* Colore di sfondo principale */
+    border: none; /* Rimuovi il bordo predefinito */
+    color: white; /* Colore del testo */
+    font-size: 1.1rem; /* Dimensione del testo */
+    padding: 10px 20px; /* Padding interno */
+    border-radius: 20px; /* Arrotondamento degli angoli */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombreggiatura */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Transizioni per hover */
+    margin-left: 50px;
+}
+
+.custom-toggle-btn:hover {
+    background-color: #218438; /* Colore di sfondo al passaggio del mouse */
+    transform: scale(1.05); /* Leggero ingrandimento al passaggio del mouse */
+}
+
+.custom-toggle-btn:focus {
+    outline: none; /* Rimuove il contorno al focus */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Ombreggiatura al focus */
+}
