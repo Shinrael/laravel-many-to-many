@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Type;
+use App\Models\Technology;
 use Illuminate\Http\Request;
 use App\Functions\Helper;
 
@@ -23,7 +25,9 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('admin.projects.create');
+        $types = Type::all();
+        $technologies = Technology::all();
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
@@ -31,15 +35,37 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+        // Valida i dati del modulo
+        $validatedData = $request->validate([
+            'title' => 'required|min:2|max:100',
+            'body' => 'min:2',
+            'type_id' => 'nullable|exists:types,id',
+            'technologies' => 'array',
+            'technologies.*' => 'exists:technologies,id',
+        ],
+        [
+           'title.required' => 'Devi inserire il nome della Tecnologia',
+           'title.min' => 'Deve avere almeno :min caratteri',
+           'title.max' => 'Deve avere al massimo :max caratteri',
+           'body.min' => 'Deve avere almeno :min caratteri',
+           'type_id.exists' => 'La tipologia selezionata non è valida',
+            'technologies.array' => 'Le tecnologie devono essere un array',
+            'technologies.*.exists' => 'Una delle tecnologie selezionate non è valida',
+        ]);
+
+
         $exist = Project::where('title', $request->title)->first();
         if ($exist) {
             return redirect()->route('admin.projects.index')->with('error', 'Nome Tecnologia già esistente');
         } else{
             $new = new Project();
-            $new->title = $request->title;
             $new->slug = Helper::generateSlug($new->title, Project::class);
-            $new->body = $request->body;
+            $new->fill($validatedData);
             $new->save();
+
+            if(array_key_exists('technologies', $validatedData)){
+                $new->technologies()->attach($validatedData['technologies']);
+            }
 
             return redirect()->route('admin.projects.index')->with('success', 'Nome Progetto creato correttamente');
         }
@@ -58,7 +84,10 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+
+        $types = Type::all();
+        $technologies = Technology::all();
+        return view('admin.projects.edit', compact('project','types', 'technologies'));
     }
 
     /**
@@ -68,19 +97,29 @@ class ProjectController extends Controller
     {
         $val_data = $request->validate([
             'title' => 'required|min:2|max:100',
-            'body' => 'min:2'
+            'body' => 'min:2',
+            'type_id' => 'nullable|exists:types,id',
+            'technologies' => 'array',
+            'technologies.*' => 'exists:technologies,id',
         ],
         [
            'title.required' => 'Devi inserire il nome della Tecnologia',
            'title.min' => 'Deve avere almeno :min caratteri',
            'title.max' => 'Deve avere al massimo :max caratteri',
            'body.min' => 'Deve avere almeno :min caratteri',
+           'type_id.exists' => 'La tipologia selezionata non è valida',
+           'technologies.array' => 'Le tecnologie devono essere un array',
+           'technologies.*.exists' => 'Una delle tecnologie selezionate non è valida',
         ]);
 
             $exist = Project::where('title', $request->title)->first();
 
             $val_data['slug'] = Helper::generateSlug($request->title, Project::class);
             $project->update($val_data);
+
+            if (array_key_exists('technologies', $val_data)) {
+                $project->technologies()->sync($val_data['technologies']);
+            }
 
             return redirect()->route('admin.projects.show', $project)->with('success', 'Nome Progetto modificato correttamente');
 
@@ -91,6 +130,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        $project->technologies()->detach();
         $project->delete();
         return redirect()->route('admin.projects.index')->with('success', 'Progetto eliminato correttamente');
     }

@@ -39,6 +39,41 @@
                     @enderror
                 </div>
 
+                {{-- Campo per i tipi --}}
+                <div class="mb-3">
+                    <label for="title" class="form-label">Tipologia</label>
+                    <select name="type_id" aria-label="Default select example" class="form-select">
+                        <option value="">Seleziona una tipologia</option>
+                        @foreach ($types as $type)
+                            <option
+                              value="{{ $type->id }}"
+                              @if (old('type_id') == $type->id) selected @endif>
+                                {{ $type->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Campo per le tecnologie --}}
+                <div class="mb-3">
+                    <label class="form-label">Tecnologie</label>
+                    <div class="btn-group btn-group-sm" role="group">
+                        @foreach ($technologies as $technology)
+                            <input
+                              name="technologies[]"
+                              type="checkbox"
+                              class="btn-check"
+                              id="technology_{{$technology->id}}"
+                              autocomplete="off"
+                              value="{{ $technology->id }}"
+                              @if (in_array($technology->id, old('technologies', [])))
+                                  checked
+                              @endif>
+                            <label class="btn btn-outline-primary" for="technology_{{$technology->id}}">{{ $technology->title }}</label>
+                        @endforeach
+                    </div>
+                </div>
+
                 <!-- Campo per il testo del progetto -->
                 <div class="mb-3">
                   <label for="body" class="form-label">Testo</label>
@@ -47,8 +82,7 @@
                         type="text"
                         class="form-control @error('body') is-invalid @enderror"
                         id="body"
-                        value="{{ old('body') }}">
-                    </textarea>
+                        value="{{ old('body') }}"></textarea>
                   @error('body')
                         <small class="text-danger">
                             {{ $message }}
